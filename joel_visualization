@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Visitors Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        canvas {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📈 Website Visitors Dashboard</h1>
+
+    <div class="card">
+        <canvas id="visitorsChart"></canvas>
+    </div>
+
+    <script>
+        async function loadCSV() {
+            const response = await fetch('data.csv');
+            const csvText = await response.text();
+
+            const rows = csvText.trim().split('\n');
+            const headers = rows.shift();
+
+            const labels = [];
+            const values = [];
+
+            rows.forEach(row => {
+                const [date, visitors] = row.split(',');
+                labels.push(date);
+                values.push(Number(visitors));
+            });
+
+            new Chart(
+                document.getElementById('visitorsChart'),
+                {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Visitors',
+                            data: values,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Monthly Visitors'
+                            }
+                        }
+                    }
+                }
+            );
+        }
+
+        loadCSV();
+    </script>
+
+</body>
+</html>
